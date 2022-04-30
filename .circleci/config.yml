@@ -8,7 +8,7 @@ jobs:
       - run:
           name: build docker image
           command: |
-            docker build --tag=todolist:${CIRCLE_BUILD_NUM} .
+            docker build --tag=todolist:${CIRCLE_BUILD_NUM} /home/sara/Documents/flask-todo-app/Dockerfile
             docker images 
 workflows:
   build_and_push_image:
