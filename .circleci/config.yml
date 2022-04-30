@@ -4,13 +4,15 @@ jobs:
     docker:
       - image: cimg/go:1.17
     steps:
+      - checkout
       - setup_remote_docker
       - run:
           name: build docker image
           command: |
-            docker build --tag=todolist:${CIRCLE_BUILD_NUM} /home/sara/Documents/flask-todo-app
+            docker build --tag=todolist:${CIRCLE_BUILD_NUM} .
             docker images 
 workflows:
   build_and_push_image:
     jobs:
       - build_image
+      
