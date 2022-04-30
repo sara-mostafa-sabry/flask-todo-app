@@ -1,0 +1,16 @@
+version: 2.1
+jobs:
+  build_image:
+    docker:
+      - image: cimg/go:1.17
+    steps:
+      - setup_remote_docker
+      - run:
+          name: build docker image
+          command: |
+            docker build --tag=todolist:${CIRCLE_BUILD_NUM} .
+            docker images 
+workflows:
+  build_and_push_image:
+    jobs:
+      - build_image
