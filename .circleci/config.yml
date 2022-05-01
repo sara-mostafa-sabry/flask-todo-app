@@ -16,6 +16,18 @@ jobs:
             docker build --tag=todolist:${CIRCLE_BUILD_NUM} .
             docker images 
 
+  install_docker:          
+    docker:
+      - image: cimg/go:1.17
+    steps:
+      - checkout
+      - run:
+          name: login to AWS
+          command: |
+            yum install docker
+            aws configure
+            aws sts get-caller-identity
+
   push_image_to_ECR:
     docker:
       - image: cimg/go:1.17
@@ -33,6 +45,10 @@ workflows:
   build_and_push_image:
     jobs:
       - build_image
+      - install_docker:
+          requires:
+          - build_image
       - push_image_to_ECR:
           requires:
             - build_image 
+            - install_docker
