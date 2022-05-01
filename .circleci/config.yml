@@ -1,7 +1,7 @@
 version: 2.1
 orbs: 
   aws-ecr: circleci/aws-ecr@8.1.0
-  
+
 jobs:
   build_image:
     docker:
@@ -15,19 +15,28 @@ jobs:
             docker build --tag=todolist:${CIRCLE_BUILD_NUM} .
             docker images 
 
+  push_image_to_ECR:
+    docker:
+      - image: cimg/go:1.17
+    steps:
+    - checkout
+    - run:
+          name: push image 
+          command: |
+            account-url: AWS_ECR_ACCOUNT_URL
+            aws-access-key-id: AWS_ACCESS_KEY_ID
+            aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+            create-repo: true
+            #dockerfile: Dockerfile
+            #path: .
+            region: AWS_REGION
+            repo: todo-list
+            tag: ${CIRCLE_BUILD_NUM}
+
 workflows:
   build_and_push_image:
     jobs:
       - build_image
       - push_image_to_ECR:
-        account-url: AWS_ECR_ACCOUNT_URL
-        aws-access-key-id: AWS_ACCESS_KEY_ID
-        aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-        create-repo: true
-        #dockerfile: Dockerfile
-        #path: .
-        region: AWS_REGION
-        repo: todo-list
-        tag: ${CIRCLE_BUILD_NUM}
           requires:
             - build_image 
