@@ -17,8 +17,7 @@ jobs:
             docker images 
 
   push_image_to_ECR:
-    docker:
-      - image: cimg/go:1.17
+    executor: aws-cli/default
     steps:
     - checkout
     - run:
