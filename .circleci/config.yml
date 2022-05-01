@@ -23,15 +23,10 @@ jobs:
     - run:
           name: push image 
           command: |
-            account-url: AWS_ECR_ACCOUNT_URL
-            aws-access-key-id: AWS_ACCESS_KEY_ID
-            aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-            create-repo: true
-            #dockerfile: Dockerfile
-            #path: .
-            region: AWS_REGION
-            repo: todo-list
-            tag: ${CIRCLE_BUILD_NUM}
+            aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
+            docker tag todolist:${CIRCLE_BUILD_NUM} AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
+            docker images
+            docker push AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
 
 workflows:
   build_and_push_image:
