@@ -27,7 +27,7 @@ jobs:
           command: |
             docker --version
             docker run --rm -it amazon/aws-cli --version
-            docker run --rm -it -v ~/.aws:/root/.aws -e AWS_PROFILE=CICD-ECR amazon/aws-cli aws configure
+            docker run --rm -it -v ~/.aws:/root/.aws -e AWS_PROFILE=CICD-ECR amazon/aws-cli aws ecr
             aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
             aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
             docker tag=todolist:${CIRCLE_BUILD_NUM} AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
