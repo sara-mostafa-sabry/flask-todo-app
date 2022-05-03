@@ -16,6 +16,15 @@ jobs:
           command: |
             docker build --tag=todolist:${CIRCLE_BUILD_NUM} .
             docker images 
+
+  aws-cli-example:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup:
+          profile-name: example
+      - run: echo "Run your code here"
+
   push_image_to_ECR:
     docker:
       - image: cimg/go:1.17
@@ -34,6 +43,12 @@ workflows:
   build_and_push_image:
     jobs:
       - build_image
+      - aws-cli-example:
+          context: aws
+          requires:
+            - build_image
       - push_image_to_ECR:
           requires:
             - build_image 
+            - aws-cli-example
+            
