@@ -23,7 +23,7 @@ jobs:
             aws sts get-caller-identity
             cat ~/.aws/config
             cat ~/.aws/credentials
-            aws configure get region 
+            aws configure get region --profile example
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
             docker tag todolist:${CIRCLE_BUILD_NUM} AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
             docker images
