@@ -1,55 +1,19 @@
 version: 2.1
 
-orbs: 
-  aws-cli: circleci/aws-cli@3.1.0
-  aws-ecr: circleci/aws-ecr@8.1.0
+orbs:
+  aws-ecr: circleci/aws-ecr@6.7.0
 
-jobs:
-  build_image:
-    docker:
-      - image: cimg/go:1.17
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: build docker image
-          command: |
-            docker build --tag=todolist:${CIRCLE_BUILD_NUM} .
-            docker images 
-
-  aws-cli-example:
-    executor: aws-cli/default
-    steps:
-      - checkout
-      - aws-cli/setup:
-          profile-name: example
-      - run: echo "Run your code here"
-
-  push_image_to_ECR:
-    docker:
-      - image: cimg/go:1.17
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: push image 
-          command: |
-            docker --version
-            docker run --rm -it amazon/aws-cli --version
-            aws configure
-            aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
-            docker tag todolist:${CIRCLE_BUILD_NUM} AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
-            docker images
-            docker push AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
 workflows:
   build_and_push_image:
     jobs:
-      - build_image
-      - aws-cli-example:
-          requires:
-            - build_image
-      - push_image_to_ECR:
-          requires:
-            - build_image 
-            - aws-cli-example
-          context: flask-todo 
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          create-repo: true
+          dockerfile: Dockerfile
+          path: .
+          region: AWS_REGION
+          repo: todo-list
+          tag: todolist:${CIRCLE_BUILD_NUM} AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
+            
