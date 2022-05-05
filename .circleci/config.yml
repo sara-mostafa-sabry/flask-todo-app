@@ -36,8 +36,7 @@ jobs:
           command: |
             docker --version
             docker run --rm -it amazon/aws-cli --version
-            #aws configure
-            ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
+            aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
             docker tag todolist:${CIRCLE_BUILD_NUM} AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
             docker images
             docker push AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
