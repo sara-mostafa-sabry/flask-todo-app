@@ -23,7 +23,7 @@ jobs:
             aws sts get-caller-identity
             #cat ~/.aws/config
             #cat ~/.aws/credentials
-            aws configure get region --profile default 
+            aws configure get region --profile example
             aws configure list-profiles
             aws configure list
             aws ecr get-login-password --region AWS_DEFAULT_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
