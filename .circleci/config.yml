@@ -23,7 +23,7 @@ jobs:
       - checkout
       - aws-cli/setup:
           profile-name: example
-      - run: echo aws --version
+      - run: aws --version
 
   push_image_to_ECR:
     docker:
