@@ -8,52 +8,24 @@ jobs:
   build_image:
     docker:
       - image: cimg/go:1.17
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: build docker image
-          command: |
-            docker build --tag=todolist:${CIRCLE_BUILD_NUM} . 
-            docker images 
-      
-  aws_cli_install:
     executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
           profile-name: example
-      - run: aws --version > ~/output.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - output.txt 
-
-  push_image_to_ECR:
-    docker:
-      - image: cimg/go:1.17
-    steps:
-      - checkout
       - setup_remote_docker
-      - attach_workspace:
-          at: ~/ 
       - run:
-          name: push image 
+          name: build and push docker image
           command: |
+            docker build --tag=todolist:${CIRCLE_BUILD_NUM} . > ~/output.txt
+            docker images 
             aws --version
             aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
             docker tag todolist:${CIRCLE_BUILD_NUM} AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
             docker images
             docker push AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
+  
 workflows:
   build_and_push_image:
     jobs:
       - build_image
-      - aws_cli_install:
-          requires:
-            - build_image
-      - push_image_to_ECR:
-          requires:
-            - build_image 
-            - aws_cli_install
-          
