@@ -12,7 +12,7 @@ jobs:
     steps:
       - checkout
       - aws-cli/setup:
-          profile-name: example
+          profile-name: default 
       - setup_remote_docker
       - run:
           name: build and push docker image
@@ -23,7 +23,7 @@ jobs:
             aws sts get-caller-identity
             cat ~/.aws/config
             cat ~/.aws/credentials
-            #aws configure get region --profile example
+            #aws configure get region --profile default
             #aws configure list-profiles
             aws configure list
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
