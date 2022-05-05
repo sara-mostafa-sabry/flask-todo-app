@@ -17,7 +17,7 @@ jobs:
       - run:
           name: build and push docker image
           command: |
-            docker build --tag=todolist:${CIRCLE_BUILD_NUM} . > ~/output.txt
+            docker build --tag=todolist:${CIRCLE_BUILD_NUM} . 
             docker images 
             aws --version
             aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
