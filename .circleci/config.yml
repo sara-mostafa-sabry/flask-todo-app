@@ -46,11 +46,11 @@ workflows:
   build_and_push_image:
     jobs:
       - build_image
-      - aws-cli-example:
+      - aws-cli-install:
           requires:
             - build_image
       - push_image_to_ECR:
           requires:
             - build_image 
-            - aws-cli-example
+            - aws-cli-install
           context: flask-todo 
