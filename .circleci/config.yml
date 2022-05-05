@@ -2,7 +2,7 @@ version: 2.1
 
 orbs: 
   aws-cli: circleci/aws-cli@3.1.0
-  aws-ecr: circleci/aws-ecr@8.1.0
+  aws-ecr: enokawa/aws-ecr@0.0.2
 
 jobs:
   build_image:
@@ -36,11 +36,12 @@ jobs:
           command: |
             docker --version
             docker run --rm -it amazon/aws-cli --version
-            echo AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
-            docker tag todolist:${CIRCLE_BUILD_NUM} AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
-            docker images
-            docker push AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
+            #echo AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            aws sts get-caller-identity
+            #aws ecr get-login-password --region AWS_REGION | docker login --username AWS --password-stdin AWS_ECR_ACCOUNT_URL
+            #docker tag todolist:${CIRCLE_BUILD_NUM} AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
+            #docker images
+            #docker push AWS_ECR_ACCOUNT_URL/todolist:${CIRCLE_BUILD_NUM}
 workflows:
   build_and_push_image:
     jobs:
