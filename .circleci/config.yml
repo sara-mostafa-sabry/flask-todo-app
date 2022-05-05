@@ -29,3 +29,4 @@ workflows:
   build_and_push_image:
     jobs:
       - build_image
+      
