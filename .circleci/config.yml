@@ -1,33 +1,68 @@
 version: 2.1
 
+image: &docker_image
+  docker:
+      - image: cimg/go:1.17
+
 orbs: 
   aws-cli: circleci/aws-cli@3.1.0
   aws-ecr: circleci/aws-ecr@8.1.2
 
 jobs:
   build_image:
-    docker:
-      - image: cimg/go:1.17
+    <<: *docker_image
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: build docker image
+          command: |
+            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . > ~/output
+            docker images 
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - output
+
+  aws_cli_install:
+    <<: *docker_image
     executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
           profile-name: default 
-      - setup_remote_docker
       - run:
-          name: build and push docker image
+          name: install aws cli  > ~/output
           command: |
-            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . 
-            docker images 
             aws --version
-            aws sts get-caller-identity
-            aws configure list
-            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ECR_ACCOUNT_URL}
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - output
+
+  push_to_ecr:
+    <<: *docker_image
+    steps:
+      - checkout
+      - setup_remote_docker
+      - attach_workspace:
+          at: ~/ 
+      - run:
+          name: push docker image to ECR
+          command: |
+            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_ACCOUNT_URL}
             docker tag todo-list:${CIRCLE_BUILD_NUM} ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_BUILD_NUM}
             docker images
             docker push ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_BUILD_NUM}
-  
+
 workflows:
   build_and_push_image:
     jobs:
       - build_image
+      - aws_cli_install:
+          requires:
+            - build_image
+      - push_to_ecr:
+          requires:
+            - build_image
+            - aws_cli_install 
