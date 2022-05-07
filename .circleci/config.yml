@@ -17,7 +17,7 @@ jobs:
       - run:
           name: build and push docker image
           command: |
-            docker build --tag=todolist:${CIRCLE_BUILD_NUM} . 
+            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . 
             docker images 
             aws --version
             aws sts get-caller-identity
