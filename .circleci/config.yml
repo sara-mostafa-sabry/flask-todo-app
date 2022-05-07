@@ -17,17 +17,17 @@ jobs:
       - run:
           name: build docker image
           command: |
-            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . > ~/project
+            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . > ~/output
             docker images 
       - persist_to_workspace:
           root: ~/
           paths:
-            - project
+            - output
 
   aws_cli_install:
     <<: *docker_image
     executor: aws-cli/default
-    working_directory: ~/project
+    working_directory: ~/output
     steps:
       - checkout
       - aws-cli/setup:
