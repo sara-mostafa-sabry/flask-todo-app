@@ -17,37 +17,27 @@ jobs:
       - run:
           name: build docker image
           command: |
-            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . 
+            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . ~/output
             docker images 
-     
-
-  aws_cli_install:
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - output      
+      
+  push_to_ecr:
     <<: *docker_image
     executor: aws-cli/default 
-    working_directory: ~/output
     steps:
       - checkout
       - aws-cli/setup:
           profile-name: default 
-      - run:
-          name: install aws cli  
-          command: |
-            aws --version
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - output
-
-  push_to_ecr:
-    <<: *docker_image
-    steps:
-      - checkout
       - setup_remote_docker
       - attach_workspace:
           at: ~/ 
       - run:
           name: push docker image to ECR
           command: |
+            aws --version
             aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_ACCOUNT_URL}
             docker tag todo-list:${CIRCLE_BUILD_NUM} ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_BUILD_NUM}
             docker images
@@ -57,10 +47,7 @@ workflows:
   build_and_push_image:
     jobs:
       - build_image
-      - aws_cli_install:
-          requires:
-            - build_image
       - push_to_ecr:
           requires:
             - build_image
-            - aws_cli_install 
+            
