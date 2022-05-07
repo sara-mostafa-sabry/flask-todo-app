@@ -32,14 +32,10 @@ jobs:
       - aws-cli/setup:
           profile-name: default 
       - run:
-          name: install aws cli  > ~/output
+          name: install aws cli  
           command: |
             aws --version
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - output
-
+      
   push_to_ecr:
     <<: *docker_image
     steps:
