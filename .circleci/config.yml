@@ -8,7 +8,7 @@ orbs:
   aws-cli: circleci/aws-cli@3.1.0
   aws-ecr: circleci/aws-ecr@8.1.2
 
-working_directory: /tmp
+
 
 jobs:
   build_image:
@@ -21,12 +21,12 @@ jobs:
           command: |
             mkdir -p workspace
             docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . 
-            docker save -o /tmp/workspace/output  todo-list:${CIRCLE_BUILD_NUM} 
+            docker save -o ~/output.tar  todo-list:${CIRCLE_BUILD_NUM} 
             docker images 
       - persist_to_workspace:
           root: ~/
           paths:
-            - output.txt 
+            - output.tar
 
   push_to_ecr:
     <<: *docker_image
@@ -37,13 +37,13 @@ jobs:
           profile-name: default 
       - setup_remote_docker
       - attach_workspace:
-          at: /tmp/workspace 
+          at: /
       - run:
           name: push docker image to ECR
           command: |
             aws --version
             aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_ACCOUNT_URL}
-            docker load -i /tmp/workspace/output
+            docker load -i ~/output.tar
             docker images
             docker tag todo-list:${CIRCLE_BUILD_NUM} ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_BUILD_NUM}
             docker push ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_BUILD_NUM}
