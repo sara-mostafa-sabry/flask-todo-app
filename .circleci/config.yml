@@ -17,7 +17,7 @@ jobs:
       - run:
           name: build docker image
           command: |
-            docker build --tag=todo-list:$latest . > ~/output
+            docker build --tag=todo-list:latest . > ~/output
             docker images 
       - persist_to_workspace:
           root: ~/
