@@ -21,7 +21,7 @@ jobs:
           command: |
             mkdir -p workspace
             docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . 
-            docker save -o /tmp/workspace/output  --tag=todo-list:${CIRCLE_BUILD_NUM} 
+            docker save -o /tmp/workspace/output  todo-list:${CIRCLE_BUILD_NUM} 
             docker images 
       - persist_to_workspace:
           root: ~/
