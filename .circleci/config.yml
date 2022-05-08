@@ -20,14 +20,14 @@ jobs:
           name: build docker image
           command: |
             mkdir -p workspace
-            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} .  
+            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . 
+            docker save -o /tmp/workspace/output  --tag=todo-list:${CIRCLE_BUILD_NUM} 
             docker images 
-            docker images > workspace/output
       - persist_to_workspace:
-          root: workspace
+          root: ~/
           paths:
-            - output      
-      
+            - output.txt 
+
   push_to_ecr:
     <<: *docker_image
     executor: aws-cli/default 
@@ -43,6 +43,7 @@ jobs:
           command: |
             aws --version
             aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_ACCOUNT_URL}
+            docker load -i /tmp/workspace/output
             docker images
             docker tag todo-list:${CIRCLE_BUILD_NUM} ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_BUILD_NUM}
             docker push ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_BUILD_NUM}
