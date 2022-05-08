@@ -17,7 +17,7 @@ jobs:
       - run:
           name: build docker image
           command: |
-            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . > ~/output
+            docker build --tag=todo-list:$latest . > ~/output
             docker images 
       - persist_to_workspace:
           root: ~/
@@ -39,7 +39,7 @@ jobs:
           command: |
             aws --version
             aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_ACCOUNT_URL}
-            docker tag todo-list:${CIRCLE_BUILD_NUM}-1 ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_BUILD_NUM}-1
+            docker tag todo-list:latest ${AWS_ECR_ACCOUNT_URL}/todo-list:latest
             docker images
             docker push ${AWS_ECR_ACCOUNT_URL}/todo-list:$latest
 
