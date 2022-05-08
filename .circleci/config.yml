@@ -20,8 +20,8 @@ jobs:
           name: build docker image
           command: |
             mkdir -p workspace
-            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} .  > workspace/output
-            docker images 
+            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} .  
+            docker images > workspace/output
       - persist_to_workspace:
           root: workspace
           paths:
