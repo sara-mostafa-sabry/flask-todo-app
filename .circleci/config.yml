@@ -39,9 +39,9 @@ jobs:
           command: |
             aws --version
             aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_ACCOUNT_URL}
-            docker tag todo-list:${CIRCLE_BUILD_NUM} ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_BUILD_NUM}
+            docker tag todo-list:$latest ${AWS_ECR_ACCOUNT_URL}/todo-list:latest
             docker images
-            docker push ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_BUILD_NUM}
+            docker push ${AWS_ECR_ACCOUNT_URL}/todo-list:$latest
 
 workflows:
   build_and_push_image:
