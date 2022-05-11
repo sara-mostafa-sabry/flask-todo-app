@@ -24,7 +24,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - todo-list:${CIRCLE_BUILD_NUM}.tar.gz
+            - project/todo-list:${CIRCLE_BUILD_NUM}.tar.gz
 
   push_to_ecr:
     docker:
