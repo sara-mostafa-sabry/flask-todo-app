@@ -16,9 +16,8 @@ jobs:
           name: build docker image
           command: |
             docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . > ~/output
-            cat ~/output
-            ls /var/lib/docker/
-
+            #cat ~/output
+            #ls /var/lib/docker/
             docker images 
       - persist_to_workspace:
           root: ~/
