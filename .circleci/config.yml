@@ -43,7 +43,8 @@ jobs:
           command: |
             ls ~/project/
             aws --version
-            docker load -i ~/project/todo-list:$\{CIRCLE_WORKFLOW_ID:0:7\}.tar.gz
+            pwd
+            docker load -i "~/project/todo-list:$\{CIRCLE_WORKFLOW_ID:0:7\}.tar.gz"
             aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_ACCOUNT_URL}
             docker images
             docker tag todo-list:${CIRCLE_WORKFLOW_ID:0:7} ${AWS_ECR_ACCOUNT_URL}/todo-list:${CIRCLE_WORKFLOW_ID:0:7}
