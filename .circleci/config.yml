@@ -19,12 +19,12 @@ jobs:
             sudo apt install tar gzip --yes
             docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . 
             docker save -o todo-list:${CIRCLE_BUILD_NUM}.tar.gz todo-list:${CIRCLE_BUILD_NUM}
-            ls ~/
+            ls ~/project/
             docker images 
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
-            - project/todo-list:${CIRCLE_BUILD_NUM}.tar.gz
+            - todo-list:${CIRCLE_BUILD_NUM}.tar.gz
 
   push_to_ecr:
     docker:
@@ -36,7 +36,7 @@ jobs:
           profile-name: default 
       - setup_remote_docker
       - attach_workspace:
-          at: ~/ 
+          at: .
       - run:
           name: push docker image to ECR
           command: |
