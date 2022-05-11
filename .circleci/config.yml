@@ -26,6 +26,7 @@ jobs:
           paths:
            # - project/todo-list:$\{CIRCLE_WORKFLOW_ID:0:7\}.tar.gz
             - project/app.py 
+            
   push_to_ecr:
     docker:
       - image: cimg/go:1.17
@@ -36,10 +37,11 @@ jobs:
           profile-name: default 
       - setup_remote_docker
       - attach_workspace:
-          at: .
+          at: ~/
       - run:
           name: push docker image to ECR
           command: |
+            ls ~/project/
             aws --version
             aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_ACCOUNT_URL}
             docker images
