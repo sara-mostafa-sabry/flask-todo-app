@@ -20,3 +20,7 @@
 [ ] write the app dockerfile
 [ ] push the image to ECR
 [ ] building and pushing the image using CircleCI
+
+### Screenshots
+
+![pipline done](https://user-images.githubusercontent.com/98274959/167963807-f53f387e-0900-4d34-8328-e1b0c6e75579.png)
