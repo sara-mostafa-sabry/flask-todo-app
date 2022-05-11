@@ -1,18 +1,13 @@
 version: 2.1
 
-image: &docker_image
-  docker:
-      - image: cimg/go:1.17
-
 orbs: 
   aws-cli: circleci/aws-cli@3.1.0
   aws-ecr: circleci/aws-ecr@8.1.2
 
-
-
 jobs:
   build_image:
-    <<: *docker_image
+    docker:
+      - image: cimg/go:1.17
     steps:
       - checkout
       - setup_remote_docker:
@@ -20,17 +15,27 @@ jobs:
       - run:
           name: build docker image
           command: |
-            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . 
+            docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . > ~/output
+            cat ~/output
+            cat /var/lib/docker/
+
             docker images 
-     
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - output
+
   push_to_ecr:
-    <<: *docker_image
+    docker:
+      - image: cimg/go:1.17
     executor: aws-cli/default 
     steps:
       - checkout
       - aws-cli/setup:
           profile-name: default 
       - setup_remote_docker
+      - attach_workspace:
+          at: ~/ 
       - run:
           name: push docker image to ECR
           command: |
