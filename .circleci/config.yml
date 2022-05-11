@@ -17,7 +17,7 @@ jobs:
           name: build docker image
           command: |
             sudo apt install tar gzip --yes
-            docker build --tag=todo-list:${CIRCLE_WORKFLOW_ID:0:7}. 
+            docker build --tag=todo-list:${CIRCLE_WORKFLOW_ID:0:7} . 
             docker save -o todo-list:${CIRCLE_WORKFLOW_ID:0:7}.tar.gz todo-list:${CIRCLE_WORKFLOW_ID:0:7}
             ls ~/project/
             docker images 
