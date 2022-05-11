@@ -26,6 +26,7 @@ jobs:
           paths:
             - todo-list:${CIRCLE_BUILD_NUM}.tar.gz
 
+
   push_to_ecr:
     docker:
       - image: cimg/go:1.17
