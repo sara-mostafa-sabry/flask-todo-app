@@ -18,7 +18,7 @@ jobs:
           command: |
             sudo apt install tar gzip --yes
             docker build --tag=todo-list:${CIRCLE_BUILD_NUM} . 
-            docker save -o ~/todo-list:${CIRCLE_BUILD_NUM}.tar.gz todo-list:${CIRCLE_BUILD_NUM}
+            docker save -o todo-list:${CIRCLE_BUILD_NUM}.tar.gz todo-list:${CIRCLE_BUILD_NUM}
             ls ~/
             docker images 
       - persist_to_workspace:
